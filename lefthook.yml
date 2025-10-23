@@ -1,0 +1,60 @@
+pre-commit:
+  parallel: true
+  commands:
+    secure:
+      run: bun audit
+
+    typescript-check:
+      run: bun tsc --noEmit
+
+    eslint:
+      run: bunx eslint "src/**/*.ts" --max-warnings=0
+
+    stylelint:
+      run: bunx stylelint "src/css/**/*.css"
+
+    htmlhint:
+      run: bunx htmlhint "public/**/*.html"
+
+    prettier:
+      run: bunx prettier --check "./**/*.{ts,css,html,json}"
+
+    deps:
+      run: bunx madge --circular --extensions ts ./src/ts
+
+    test:
+      run: bun test
+
+pre-push:
+  parallel: true
+  commands:
+    typescript-check:
+      run: bun tsc --noEmit
+
+    eslint:
+      run: bunx eslint "src/**/*.ts" --max-warnings=0
+
+    stylelint:
+      run: bunx stylelint "src/css/**/*.css"
+
+    htmlhint:
+      run: bunx htmlhint "public/**/*.html"
+
+    prettier:
+      run: bunx prettier --check "./**/*.{ts,css,html,json}"
+
+    test:
+      run: bun test
+
+    deps:
+      run: bunx madge --circular --extensions ts ./src/ts
+
+    check-todos:
+      run: grep -iR "TODO" ./ | grep -v node_modules .git || true
+      skip:
+        - all: false
+
+commit-msg:
+  commands:
+    lint-message:
+      run: bunx commitlint --edit {1}
